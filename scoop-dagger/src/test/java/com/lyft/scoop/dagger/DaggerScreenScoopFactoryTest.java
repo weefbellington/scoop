@@ -29,9 +29,15 @@ public class DaggerScreenScoopFactoryTest {
     }
 
     @Test
-    public void testAddModule() {
+    public void testAddModuleDynamic() {
         when(mockDaggerInjector.extend(any(TestModule.class))).thenReturn(mockDaggerInjector);
-        assertNotNull(daggerScreenScooper.addServices(scoopBuilder, new TestScreen(), scoop));
+        assertNotNull(daggerScreenScooper.addServices(scoopBuilder, new TestScreenDynamicModule(), scoop));
+    }
+
+    @Test
+    public void testAddModuleStatic() {
+        when(mockDaggerInjector.extend(any(TestModule.class))).thenReturn(mockDaggerInjector);
+        assertNotNull(daggerScreenScooper.addServices(scoopBuilder, new TestScreenStaticModule(), scoop));
     }
 
     @Test
@@ -40,8 +46,15 @@ public class DaggerScreenScoopFactoryTest {
     }
 
     @DaggerModule(TestModule.class)
-    private static class TestScreen extends Screen {
+    private static class TestScreenStaticModule extends Screen {
 
+    }
+
+    private static class TestScreenDynamicModule extends Screen implements DaggerScreen {
+        @Override
+        public Object[] getModules() {
+            return new Object[] { new TestModule()} ;
+        }
     }
 
     static class TestNoModuleScreen extends Screen {
